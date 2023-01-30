@@ -8,12 +8,12 @@ declare namespace TaskForm {
     id: string
     value: Task
     onChange: (v: ChangeEventHandler) => void
-    [prop: string]: string
+    [key: string]: unknown
   }
   type ListProps = {
     updateZoomId: (id: string) => void
     children: React.ReactNode
-    [prop: string]: string
+    [prop: string]: unknown
   }
 
   type TaskFormContext = {

@@ -1,9 +1,8 @@
-import { Box, Circle } from '@chakra-ui/react'
-import TaskForm, { TaskFormList } from '@renderer/components/TaskForm'
+import { Box, Circle, Wrap } from '@chakra-ui/react'
 import { addNewTodayTask, setTodayTask } from '@renderer/store/features/taskSlice'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
-import { Task } from 'electron'
+import { Form, Formik } from 'formik'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { MdOutlineAddCircle } from 'react-icons/md'
 import { useDispatch, useSelector } from 'react-redux'
@@ -83,41 +82,48 @@ const Today: FC = () => {
   }
 
   return (
-    <Box sx={{ overflow: 'auto' }}>
-      {/* <PageHeader title="Today">
-        <Box
-          sx={{
-            marginLeft: '10px',
-            width: 'fit-content',
-            display: 'flex',
-            alignItems: 'baseline',
-            fontSize: '14px',
-            letterSpacing: '1px'
-          }}
-        >
-          昨天尚还有
-          <Text color="red" cursor="pointer">
-            3条
-          </Text>
-          未完成，
-          <Text color="red">一键导入</Text>
-          到今天？
-        </Box>
-      </PageHeader> */}
+    <Wrap w="100%">
       {/* 下拉选项控制、标题输入、描述输入、单项设置 */}
       {todayList.length === 0 && <EmptyToday />}
-      <TaskFormList
-        zoomId={zoomId}
-        updateZoomId={updateZoomId}
-        height="calc(100vh - 160px)"
-        scrollBehavior="smooth"
-        overflowX="hidden"
-        // '&::-webkit-scrollbar': { display: 'none' }
+      <Formik
+        initialValues={todayList}
+        onSubmit={async (values) => {
+          await new Promise((r) => setTimeout(r, 500))
+          alert(JSON.stringify(values, null, 2))
+        }}
       >
-        {todayList.map((task: Task) => (
-          <TaskForm id={task.id} value={task} key={task.id} onChange={handleTodayTask} mb="12px" />
-        ))}
-      </TaskFormList>
+        {({ values }) => (
+          <Form>
+            {/* <FieldArray name="friends"> */}
+            {({ insert, remove, push }) => <Box>
+            {values?.map((task, index) => (
+                  <Flex key={index}>
+                    <Field
+                      name={`task.title`}
+                      placeholder="Jane Doe"
+                      type="text"
+                    />
+                    <TaskForm id={task.id} value={task} key={task.id} onChange={handleTodayTask} mb="12px" />
+                    {/* <div className="col">
+                        <label htmlFor={`friends.${index}.name`}>Name</label>
+                        <Field
+                          name={`friends.${index}.name`}
+                          placeholder="Jane Doe"
+                          type="text"
+                        />
+                        <ErrorMessage
+                          name={`friends.${index}.name`}
+                          component="div"
+                          className="field-error"
+                        />
+                        </div> */}
+                  </Flex>
+            )}
+            </Box>}
+            {/* </FieldArray> */}
+          </Form>
+        )}
+      </Formik>
       <Circle
         position={'fixed'}
         right="28px"
@@ -126,9 +132,9 @@ const Today: FC = () => {
         onClick={newTodayTask}
         color="red"
       >
-        <MdOutlineAddCircle size={50} title="添加" />
+        <MdOutlineAddCircle size="50" title="添加" />
       </Circle>
-    </Box>
+    </Wrap>
   )
 }
 export default Today
