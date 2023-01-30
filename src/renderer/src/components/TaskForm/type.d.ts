@@ -1,21 +1,22 @@
 declare namespace TaskForm {
-  type Zoom = 'expand' | 'collapse'
+  type Task = {
+    id: string
+    title: string // 标题内容
+    status: TaskStatus.Status
+  }
   type Props = {
-    sx?: SxProps<Theme>
-    zoom?: Zoom
     id: string
     value: Task
     onChange: (v: ChangeEventHandler) => void
+    [prop: string]: string
   }
   type ListProps = {
-    zoomId: string
     updateZoomId: (id: string) => void
-    sx?: SxProps<Theme>
     children: React.ReactNode
+    [prop: string]: string
   }
 
   type TaskFormContext = {
-    zoomId: string
     updateZoomId: (id: string) => void
   }
 }

@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react'
+import { Box, Circle } from '@chakra-ui/react'
 import TaskForm, { TaskFormList } from '@renderer/components/TaskForm'
 import { addNewTodayTask, setTodayTask } from '@renderer/store/features/taskSlice'
 import dayjs from 'dayjs'
@@ -109,26 +109,25 @@ const Today: FC = () => {
       <TaskFormList
         zoomId={zoomId}
         updateZoomId={updateZoomId}
-        sx={{
-          height: 'calc(100vh - 160px)',
-          scrollBehavior: 'smooth',
-          overflowX: 'hidden',
-          '&::-webkit-scrollbar': { display: 'none' }
-        }}
+        height="calc(100vh - 160px)"
+        scrollBehavior="smooth"
+        overflowX="hidden"
+        // '&::-webkit-scrollbar': { display: 'none' }
       >
         {todayList.map((task: Task) => (
-          <TaskForm
-            sx={{ marginBottom: '12px' }}
-            id={task.id}
-            value={task}
-            key={task.id}
-            onChange={handleTodayTask}
-          />
+          <TaskForm id={task.id} value={task} key={task.id} onChange={handleTodayTask} mb="12px" />
         ))}
       </TaskFormList>
-      <Box position={'fixed'} right="28px" bottom="36px" cursor={'pointer'}>
-        <MdOutlineAddCircle onClick={newTodayTask} size={30} color="red" title="添加" />
-      </Box>
+      <Circle
+        position={'fixed'}
+        right="28px"
+        bottom="36px"
+        cursor={'pointer'}
+        onClick={newTodayTask}
+        color="red"
+      >
+        <MdOutlineAddCircle size={50} title="添加" />
+      </Circle>
     </Box>
   )
 }
