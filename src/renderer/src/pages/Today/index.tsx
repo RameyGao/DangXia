@@ -1,12 +1,11 @@
-import { Box, Circle, Wrap } from '@chakra-ui/react'
+import { Box, Circle } from '@chakra-ui/react'
+import TaskForm from '@renderer/components/TaskForm'
 import { addNewTodayTask, setTodayTask } from '@renderer/store/features/taskSlice'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
-import { Form, Formik } from 'formik'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { MdOutlineAddCircle } from 'react-icons/md'
 import { useDispatch, useSelector } from 'react-redux'
-
 dayjs.extend(isBetween)
 
 /**
@@ -82,48 +81,22 @@ const Today: FC = () => {
   }
 
   return (
-    <Wrap w="100%">
+    <Box>
       {/* 下拉选项控制、标题输入、描述输入、单项设置 */}
-      {todayList.length === 0 && <EmptyToday />}
-      <Formik
-        initialValues={todayList}
-        onSubmit={async (values) => {
-          await new Promise((r) => setTimeout(r, 500))
-          alert(JSON.stringify(values, null, 2))
-        }}
-      >
-        {({ values }) => (
-          <Form>
-            {/* <FieldArray name="friends"> */}
-            {({ insert, remove, push }) => <Box>
-            {values?.map((task, index) => (
-                  <Flex key={index}>
-                    <Field
-                      name={`task.title`}
-                      placeholder="Jane Doe"
-                      type="text"
-                    />
-                    <TaskForm id={task.id} value={task} key={task.id} onChange={handleTodayTask} mb="12px" />
-                    {/* <div className="col">
-                        <label htmlFor={`friends.${index}.name`}>Name</label>
-                        <Field
-                          name={`friends.${index}.name`}
-                          placeholder="Jane Doe"
-                          type="text"
-                        />
-                        <ErrorMessage
-                          name={`friends.${index}.name`}
-                          component="div"
-                          className="field-error"
-                        />
-                        </div> */}
-                  </Flex>
-            )}
-            </Box>}
-            {/* </FieldArray> */}
-          </Form>
-        )}
-      </Formik>
+      {/* {todayList.length === 0 && <EmptyToday />} */}
+      <Box>
+        {[{ id: '1' }].map((task) => {
+          return (
+            <TaskForm
+              id={task.id}
+              value={task}
+              key={task.id}
+              onChange={handleTodayTask}
+              mb="12px"
+            />
+          )
+        })}
+      </Box>
       <Circle
         position={'fixed'}
         right="28px"
@@ -134,7 +107,7 @@ const Today: FC = () => {
       >
         <MdOutlineAddCircle size="50" title="添加" />
       </Circle>
-    </Wrap>
+    </Box>
   )
 }
 export default Today

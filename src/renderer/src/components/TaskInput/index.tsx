@@ -15,7 +15,8 @@ const TaskInput: FC<TaskInput.Props> = ({
     <Editable
       w="full"
       bg="#eee8e872"
-      borderRadius="18px"
+      borderRadius="12px"
+      pl="12px"
       variant={variant}
       placeholder={placeholder}
       defaultValue={value}
