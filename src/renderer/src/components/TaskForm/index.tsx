@@ -3,6 +3,7 @@ import { Box, Flex } from '@chakra-ui/react'
 import { createContext, FC } from 'react'
 import { GoSettings } from 'react-icons/go'
 import TaskInput from '../TaskInput'
+import TaskModal from '../TaskModal'
 import TaskStatus from '../TaskStatus'
 
 // 默认的TaskFormContext
@@ -17,7 +18,15 @@ const TaskFormList: FC<TaskForm.ListProps> = ({ updateZoomId, children, ...prop 
 }
 
 // Form组件
-const TaskForm: FC<TaskForm.Props> = ({ id = '', value, onChange, ...prop }) => {
+const TaskForm: FC<TaskForm.Props> = ({
+  id = '',
+  title,
+  tag,
+  priority,
+  status,
+  onChange,
+  ...prop
+}) => {
   return (
     <Box
       borderRadius="18px"
@@ -31,17 +40,19 @@ const TaskForm: FC<TaskForm.Props> = ({ id = '', value, onChange, ...prop }) => 
     >
       <Flex direction={'row'} justify="space-between" alignItems={'center'} w="full">
         {/* 任务状态 - 颜色标记 */}
-        <TaskStatus status={0} />
+        <TaskStatus status={status} />
         {/* 任务名称 修改、disable... */}
         <TaskInput
           id={id}
           placeholder="请输入任务名称"
-          value={value.title}
-          onChange={(e) => onChange({ id: value.id, key: 'title', value: e.target.value })}
+          value={title}
+          onChange={(e) => onChange({ id, key: 'title', value: e.target.value })}
           mx="18px"
         />
         {/* 设置：任务状态、操作 */}
-        <GoSettings size="32px" />
+        <TaskModal id={id} title={title} tag={tag} priority={priority}>
+          <GoSettings size="32px" />
+        </TaskModal>
       </Flex>
     </Box>
   )

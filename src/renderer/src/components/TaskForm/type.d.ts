@@ -1,14 +1,7 @@
 declare namespace TaskForm {
-  type Task = {
-    id: string
-    title: string // 标题内容
-    status: TaskStatus.Status
-  }
-  type Props = {
-    id: string
-    value: Task
+  interface Props extends Task.TaskItem {
     onChange: (v: ChangeEventHandler) => void
-    [key: string]: unknown
+    [prop: string]: unknown
   }
   type ListProps = {
     updateZoomId: (id: string) => void

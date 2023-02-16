@@ -1,9 +1,9 @@
 import { Box, Circle } from '@chakra-ui/react'
 import TaskForm from '@renderer/components/TaskForm'
-import { addNewTodayTask, setTodayTask } from '@renderer/store/features/taskSlice'
+import TaskModal from '@renderer/components/TaskModal'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
-import { FC, useEffect, useMemo, useState } from 'react'
+import { FC, useMemo } from 'react'
 import { MdOutlineAddCircle } from 'react-icons/md'
 import { useDispatch, useSelector } from 'react-redux'
 dayjs.extend(isBetween)
@@ -49,64 +49,51 @@ const EmptyToday: FC = () => {
 // 当天的任务新建修改
 const Today: FC = () => {
   const dispatch = useDispatch()
-  const todayList = useSelector((state: any) => state.task.today.task)
+  const todayList = useSelector((state: any) => state.task.todayList)
 
-  // 缩放id，采用数组index作为key，设置缩放拉伸
-  const [zoomId, setZoomId] = useState<string>('')
+  // useEffect(() => {
+  //   // TODO:若无任务，默认新增第一条
+  //   // 当新增一条任务，展开所在任务的缩放
+  //   if (todayList?.length > 0) {
+  //     updateZoomId(todayList[todayList.length - 1].id)
+  //   }
+  // }, [todayList])
+  // useEffect(() => {
+  //   return () => {
+  //     // 离开页面时，更新任务到后台
+  //     console.log('......', todayList)
+  //   }
+  // }, [todayList])
 
-  useEffect(() => {
-    // TODO:若无任务，默认新增第一条
-    // 当新增一条任务，展开所在任务的缩放
-    if (todayList.length > 0) {
-      updateZoomId(todayList[todayList.length - 1].id)
-    }
-  }, [todayList])
-  useEffect(() => {
-    return () => {
-      // 离开页面时，更新任务到后台
-      console.log('......', todayList)
-    }
-  }, [todayList])
-  // 缩放，拉伸，收起form表单，将这件事交付于父组件执行
-  const updateZoomId = (id: string) => {
-    setZoomId(id)
-  }
-  // 新增一条空task
-  const newTodayTask = () => {
-    dispatch(addNewTodayTask())
-  }
   // 新增task详细记录
   const handleTodayTask = (value: Task.UpdateTaskPayload) => {
-    dispatch(setTodayTask(value))
+    // dispatch(setTodayTask(value))
   }
 
   return (
     <Box>
       {/* 下拉选项控制、标题输入、描述输入、单项设置 */}
-      {/* {todayList.length === 0 && <EmptyToday />} */}
-      <Box>
-        {[{ id: '1' }].map((task) => {
-          return (
-            <TaskForm
-              id={task.id}
-              value={task}
-              key={task.id}
-              onChange={handleTodayTask}
-              mb="12px"
-            />
-          )
-        })}
-      </Box>
-      <Circle
-        position={'fixed'}
-        right="28px"
-        bottom="36px"
-        cursor={'pointer'}
-        onClick={newTodayTask}
-        color="red"
-      >
-        <MdOutlineAddCircle size="50" title="添加" />
-      </Circle>
+      {todayList.length === 0 ? (
+        <EmptyToday />
+      ) : (
+        <Box>
+          {todayList.map((task) => {
+            return <TaskForm key={task.id} {...task} onChange={handleTodayTask} mb="12px" />
+          })}
+        </Box>
+      )}
+      <TaskModal>
+        <Circle
+          position={'fixed'}
+          right="28px"
+          bottom="36px"
+          cursor={'pointer'}
+          // onClick={newTodayTask}
+          color="red"
+        >
+          <MdOutlineAddCircle size="50" title="添加" />
+        </Circle>
+      </TaskModal>
     </Box>
   )
 }
