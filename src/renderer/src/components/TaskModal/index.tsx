@@ -17,26 +17,44 @@ import {
   Select,
   useDisclosure
 } from '@chakra-ui/react'
+import { PRIORITY } from '@renderer/store/enum'
 import { findAndUpdateTodayTask } from '@renderer/store/features/taskSlice'
-import { FC, useState } from 'react'
+import { FC, ReactNode, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { TaskModalType } from './type'
+
+// 默认task
+const DefaultTask: TaskModalType.TaskInfo = { title: '', tag: 'STUDY', priority: 'none' }
+
+// 优先级列表
+const priorityList: Array<[string, string]> = Object.entries(PRIORITY)
 
 // 输入框组件
-const TaskModal: FC<TaskModalType.Props> = ({ id, children, ...props }) => {
-  const dispatch = useDispatch()
-  const todayList = useSelector((state: any) => state.task.todayList)
-
+const TaskModal: FC<TaskModalType.Props> = ({ children, ...props }) => {
+  const [task, setTask] = useState<TaskModalType.TaskInfo>(DefaultTask)
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const dispatch = useDispatch()
+  const todayList = useSelector<Task.IRootState, Task.TaskItem[]>((state) => state.task.todayList)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [task, setTask] = useState<TaskModalType.TaskInfo>({
-    title: '',
-    tag: 'STUDY',
-    priority: 'none'
-  })
+  useEffect(() => {
+    setTask(
+      isOpen
+        ? {
+            ...DefaultTask,
+            ...props
+          }
+        : DefaultTask
+    )
+  }, [isOpen])
+
+  // 更新task的单个条目
+  const handleChangeValue = (type: string, value: string): void => {
+    setTask({ ...task, [type]: value })
+  }
+
+  // 保存或更新task
   const onSave = (): void => {
-    // 存储数据
+    console.log('task', task)
+    // 存储task
     dispatch(findAndUpdateTodayTask(task))
     // 关闭弹窗
     console.log('todayList', todayList)
@@ -44,10 +62,6 @@ const TaskModal: FC<TaskModalType.Props> = ({ id, children, ...props }) => {
     // 动画展示新增元素
   }
 
-  // 更新task
-  const handleChangeValue = (type: string, value: string): void => {
-    setTask({ ...task, [type]: value })
-  }
   return (
     <>
       <Box onClick={onOpen}>{children}</Box>
@@ -65,7 +79,6 @@ const TaskModal: FC<TaskModalType.Props> = ({ id, children, ...props }) => {
                 value={task.title}
                 onChange={(e): void => handleChangeValue('title', e.target.value)}
               />
-              {/* <FormHelperText>这件事我今天可以做完..</FormHelperText> */}
             </FormControl>
             <FormControl mb={4}>
               <FormLabel>标签</FormLabel>
@@ -86,10 +99,14 @@ const TaskModal: FC<TaskModalType.Props> = ({ id, children, ...props }) => {
                 onChange={(value: string): void => handleChangeValue('priority', value)}
               >
                 <HStack spacing="24px">
-                  <Radio value="none">无</Radio>
-                  <Radio value="low">低</Radio>
-                  <Radio value="middle">中</Radio>
-                  <Radio value="high">高</Radio>
+                  {priorityList.map(
+                    // FIXME: string应该用Priority来表示
+                    ([value, label]: [string, string]): ReactNode => (
+                      <Radio value={value} key={label}>
+                        {label}
+                      </Radio>
+                    )
+                  )}
                 </HStack>
               </RadioGroup>
             </FormControl>

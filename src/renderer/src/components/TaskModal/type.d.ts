@@ -1,6 +1,5 @@
-import { ReactElement } from 'react'
-
 declare namespace TaskModalType {
+  import { ReactElement } from 'react'
   type FuncType = () => void
   type Props = {
     children: ReactElement

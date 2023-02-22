@@ -16,12 +16,16 @@ declare namespace Task {
   }
   type InitialTaskState = {
     date: number
-    todayList: Task[]
+    todayList: TaskItem[]
   }
 
   type UpdateTaskPayload = {
     id: string
     key: keyof TaskItem
     value: string | TaskStatus
+  }
+
+  type IRootState = {
+    task: InitialTaskState
   }
 }

@@ -1,9 +1,12 @@
 import { Box, Circle } from '@chakra-ui/react'
 import TaskForm from '@renderer/components/TaskForm'
 import TaskModal from '@renderer/components/TaskModal'
+import { setTodayTask, updateTodayTaskByIndex } from '@renderer/store/features/taskSlice'
+import type * as CSS from 'csstype'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
-import { FC, useMemo } from 'react'
+import { FC, ReactNode, useMemo } from 'react'
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import { MdOutlineAddCircle } from 'react-icons/md'
 import { useDispatch, useSelector } from 'react-redux'
 dayjs.extend(isBetween)
@@ -46,10 +49,39 @@ const EmptyToday: FC = () => {
   )
 }
 
+// a little function to help us with reordering the result
+const reorder = (list: Task.TaskItem[], startIndex: number, endIndex: number): Task.TaskItem[] => {
+  const result = [...list]
+  const [removed] = result.splice(startIndex, 1)
+  result.splice(endIndex, 0, removed)
+
+  return result
+}
+
+const grid = 8
+
+const getItemStyle = (isDragging: boolean, draggableStyle: CSS.Properties): CSS.Properties => ({
+  // some basic styles to make the items look a bit nicer
+  userSelect: 'none',
+  padding: `${grid * 2}px`,
+  margin: `0 0 ≈ 0`,
+
+  // change background colour if dragging
+  background: isDragging ? 'lightgreen' : '#ffffff',
+
+  // styles we need to apply on draggables
+  ...draggableStyle
+})
+const getListStyle = (isDraggingOver: boolean): CSS.Properties & { rounded: string } => ({
+  background: isDraggingOver ? 'lightblue' : '#fbfaf5',
+  padding: `${grid}px`,
+  rounded: 'md'
+})
+
 // 当天的任务新建修改
 const Today: FC = () => {
   const dispatch = useDispatch()
-  const todayList = useSelector((state: any) => state.task.todayList)
+  const todayList = useSelector<Task.IRootState, Task.TaskItem[]>((state) => state.task.todayList)
 
   // useEffect(() => {
   //   // TODO:若无任务，默认新增第一条
@@ -66,9 +98,24 @@ const Today: FC = () => {
   // }, [todayList])
 
   // 新增task详细记录
-  const handleTodayTask = (value: Task.UpdateTaskPayload) => {
-    // dispatch(setTodayTask(value))
+  const handleTodayTask = (value: Task.UpdateTaskPayload): void => {
+    dispatch(setTodayTask(value))
   }
+
+  const onDragEnd = (result: {
+    destination: { index: number }
+    source: { index: number }
+  }): void => {
+    if (!result.destination) {
+      return
+    }
+    // 更新排序
+    const list = reorder(todayList, result.source.index, result.destination.index)
+
+    dispatch(updateTodayTaskByIndex(list))
+  }
+
+  console.log('todayList effect', todayList)
 
   return (
     <Box>
@@ -76,18 +123,45 @@ const Today: FC = () => {
       {todayList.length === 0 ? (
         <EmptyToday />
       ) : (
-        <Box>
-          {todayList.map((task) => {
-            return <TaskForm key={task.id} {...task} onChange={handleTodayTask} mb="12px" />
-          })}
-        </Box>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided, snapshot: { isDraggingOver: boolean }): ReactNode => (
+              <Box
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                style={getListStyle(snapshot.isDraggingOver)}
+              >
+                {todayList.map((task: Task.TaskItem, index: number) => (
+                  <Draggable key={task.id} draggableId={task.id} index={index}>
+                    {(provided, snapshot: { isDragging: boolean }): ReactNode => (
+                      <Box
+                        p="6"
+                        boxShadow="md"
+                        rounded="lg"
+                        mb="12px"
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
+                      >
+                        {/* 任务栏目 */}
+                        <TaskForm {...task} onChange={handleTodayTask} />
+                      </Box>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </Box>
+            )}
+          </Droppable>
+        </DragDropContext>
       )}
       <TaskModal>
         <Circle
-          position={'fixed'}
+          pos="fixed"
           right="28px"
           bottom="36px"
-          cursor={'pointer'}
+          cursor="pointer"
           // onClick={newTodayTask}
           color="red"
         >

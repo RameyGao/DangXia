@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 
-function Versions(): JSX.Element {
+function Versions(): ReactNode {
   const [versions] = useState(window.electron.process.versions)
 
   return (
