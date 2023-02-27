@@ -12,8 +12,13 @@ const Sidebar: FC = () => {
   // 渲染Menu
   const renderMenuItem: FC<SideBar.SideItem> = ({ title, icon, link, click }) => (
     // isDisabled={!title}
-    <div className="tooltip tooltip-open tooltip-right" data-tip={title || ''} key={title}>
+    <div
+      className={`tooltip tooltip-right ${isChecked(link) && 'tooltip-open'}`}
+      data-tip={title || ''}
+      key={title}
+    >
       <div className="py-[20px]" onClick={(): void => (link ? navigate(link) : click?.())}>
+        {icon()}
         {/* <Icon as={icon} color={isChecked(link) ? '#8774E7' : '#003400'} fontSize="28px" /> */}
       </div>
     </div>
@@ -21,7 +26,7 @@ const Sidebar: FC = () => {
 
   return (
     <div className="flex flex-col justify-between items-center bg-[#f3f3f3] w-[80px] h-screen">
-      <div>
+      <div className="flex flex-col">
         <div className="my-[20px] text-white">
           <div className="text-md bg-[tomato] text-white">DX</div>
         </div>

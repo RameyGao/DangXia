@@ -1,38 +1,20 @@
-import Card from '@renderer/components/Card'
+import ProgressCard from '@renderer/components/Progress/Card'
+import ProgressCardList from '@renderer/components/Progress/CardList'
 import { FC } from 'react'
 
-const ProgressList = [
-  {
-    bg: '#c1e4e9',
-    text: 'Doing',
-    count: 1
-  },
-  {
-    bg: '#cc7eb1',
-    text: 'Delay',
-    count: 2
-  },
-  {
-    bg: '#21a675',
-    text: 'Complet',
-    count: 3
-  },
-  {
-    bg: '#8b968d',
-    text: 'Cancel',
-    count: 10
-  }
+const Progress = [
+  { text: 'Ongoing', value: 3, bgColor: 'bg-gray-300' },
+  { text: 'Delay', value: 3, bgColor: 'bg-indigo-300' },
+  { text: 'Complet', value: 3, bgColor: 'bg-green-300' },
+  { text: 'Cancel', value: 3, bgColor: 'bg-yellow-300' }
 ]
 const CardList: FC<DashBoard.CardListProps> = ({}) => {
   return (
-    <div className="flex">
-      {ProgressList.map((c: Card.Props, i: number) => (
-        <>
-          <Card key={c.text} {...c} />
-          {ProgressList.length !== i + 1 && <div />}
-        </>
+    <ProgressCardList sx="w-[800px] min-w-[400px] overflow-scroll">
+      {Progress.map((v) => (
+        <ProgressCard {...v} key={v.text} />
       ))}
-    </div>
+    </ProgressCardList>
   )
 }
 
