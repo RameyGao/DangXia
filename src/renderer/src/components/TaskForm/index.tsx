@@ -1,5 +1,4 @@
 // 任务表单，包含任务名称、任务描述、任务状态、任务执行时间、任务设置
-import { Flex } from '@chakra-ui/react'
 import { FC } from 'react'
 import { TbSettings } from 'react-icons/tb'
 import TaskInput from '../TaskInput'
@@ -20,16 +19,8 @@ import TaskStatus from '../TaskStatus'
 // Form组件
 const TaskForm: FC<TaskForm.Props> = ({ id, title, tag, priority, status, onChange, ...prop }) => {
   return (
-    <Flex
-      direction={'row'}
-      justify="space-between"
-      alignItems={'center'}
-      w="full"
-      bg="#fff"
-      p="24px 20px"
-      h="auto"
-      pos="relative"
-      // userSelect="none"
+    <div
+      className="flex flex-row justify-between items-center w-full h-auto px-[20px] py-[24px] relative select-none"
       {...prop}
     >
       {/* 任务状态 - 颜色标记 */}
@@ -58,7 +49,7 @@ const TaskForm: FC<TaskForm.Props> = ({ id, title, tag, priority, status, onChan
       <TaskModal id={id} title={title} tag={tag} priority={priority}>
         <TbSettings size="24px" cursor="pointer" />
       </TaskModal>
-    </Flex>
+    </div>
   )
 }
 

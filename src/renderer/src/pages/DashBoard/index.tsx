@@ -1,4 +1,3 @@
-import { Flex, Spacer, Wrap } from '@chakra-ui/react'
 import Card from '@renderer/components/Card'
 import { FC } from 'react'
 
@@ -26,19 +25,19 @@ const ProgressList = [
 ]
 const CardList: FC<DashBoard.CardListProps> = ({}) => {
   return (
-    <Flex>
+    <div className="flex">
       {ProgressList.map((c: Card.Props, i: number) => (
         <>
           <Card key={c.text} {...c} />
-          {ProgressList.length !== i + 1 && <Spacer />}
+          {ProgressList.length !== i + 1 && <div />}
         </>
       ))}
-    </Flex>
+    </div>
   )
 }
 
 const Summary: FC = ({}: DashBoard.SummaryProps) => {
-  return <Flex w="">Summary</Flex>
+  return <div className="flex">Summary</div>
 }
 
 const TodaySchedule: FC = ({}: DashBoard.TodayScheduleProps) => {
@@ -56,20 +55,20 @@ const Notification: FC = ({}: DashBoard.NotificationProps) => {
 // dashboard
 const Dashboard: FC = () => {
   return (
-    <Wrap>
-      <Flex>
-        <Flex direction="column" w="560px">
+    <div>
+      <div className="flex">
+        <div className="flex flex-col w-[560px]">
           <CardList />
           <Summary />
-        </Flex>
-        <Spacer />
-        <Flex>
+        </div>
+        <div />
+        <div className="flex">
           <TodaySchedule />
-        </Flex>
-      </Flex>
+        </div>
+      </div>
       <WeekSchedule />
       <Notification />
-    </Wrap>
+    </div>
   )
 }
 

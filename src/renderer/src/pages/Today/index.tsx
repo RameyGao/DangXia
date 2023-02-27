@@ -1,4 +1,3 @@
-import { Box, Circle } from '@chakra-ui/react'
 import TaskForm from '@renderer/components/TaskForm'
 import TaskModal from '@renderer/components/TaskModal'
 import { setTodayTask, updateTodayTaskByIndex } from '@renderer/store/features/taskSlice'
@@ -28,24 +27,9 @@ const EmptyToday: FC = () => {
     return '晚上好，今天未开启任务，明天不要忘记哦'
   }, [])
   return (
-    <Box
-      sx={{
-        height: '40vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}
-    >
-      <Box
-        sx={{
-          fontSize: '24px',
-          fontWeight: 'bold',
-          color: '#828282'
-        }}
-      >
-        {desc}
-      </Box>
-    </Box>
+    <div className="h-[40vh] flex justify-center items-center">
+      <div className="text-[24px] font-bold text-[#828282]">{desc}</div>
+    </div>
   )
 }
 
@@ -118,7 +102,7 @@ const Today: FC = () => {
   console.log('todayList effect', todayList)
 
   return (
-    <Box>
+    <div>
       {/* 下拉选项控制、标题输入、描述输入、单项设置 */}
       {todayList.length === 0 ? (
         <EmptyToday />
@@ -126,7 +110,7 @@ const Today: FC = () => {
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
             {(provided, snapshot: { isDraggingOver: boolean }): ReactNode => (
-              <Box
+              <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
                 style={getListStyle(snapshot.isDraggingOver)}
@@ -134,11 +118,8 @@ const Today: FC = () => {
                 {todayList.map((task: Task.TaskItem, index: number) => (
                   <Draggable key={task.id} draggableId={task.id} index={index}>
                     {(provided, snapshot: { isDragging: boolean }): ReactNode => (
-                      <Box
-                        p="6"
-                        boxShadow="md"
-                        rounded="lg"
-                        mb="12px"
+                      <div
+                        className="p-6 rounded-lg mb-[12px] shadow-md"
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
@@ -146,29 +127,25 @@ const Today: FC = () => {
                       >
                         {/* 任务栏目 */}
                         <TaskForm {...task} onChange={handleTodayTask} />
-                      </Box>
+                      </div>
                     )}
                   </Draggable>
                 ))}
                 {provided.placeholder}
-              </Box>
+              </div>
             )}
           </Droppable>
         </DragDropContext>
       )}
       <TaskModal>
-        <Circle
-          pos="fixed"
-          right="28px"
-          bottom="36px"
-          cursor="pointer"
+        <div
+          className="fixed right-[28px] bottom-[36px] pointer text-[red]"
           // onClick={newTodayTask}
-          color="red"
         >
           <MdOutlineAddCircle size="50" title="添加" />
-        </Circle>
+        </div>
       </TaskModal>
-    </Box>
+    </div>
   )
 }
 export default Today

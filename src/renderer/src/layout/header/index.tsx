@@ -1,18 +1,15 @@
-import { Box, Flex, Text } from '@chakra-ui/react'
 import DayTime from '@renderer/components/DayTime'
 import { FC } from 'react'
 
 const PageHeader: FC<LayoutHeader.Props> = ({ title, children }) => {
   return (
-    <Box pb="22px" pos="relative">
-      <Flex align="baseline">
-        <Text fontSize="32px" color="#000" fontWeight="medium">
-          {title}
-        </Text>
+    <div className="pb-[22px] relative">
+      <div className="flex items-baseline">
+        <p className="text-[32px] text-black font-medium">{title}</p>
         <DayTime ml="8px" />
-      </Flex>
+      </div>
       {children}
-    </Box>
+    </div>
   )
 }
 

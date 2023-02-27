@@ -1,4 +1,3 @@
-import { Box, Center, Circle, Flex, Icon, Tooltip } from '@chakra-ui/react'
 import { FC } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { getMenuItems, getOptionItems } from './constant'
@@ -12,35 +11,27 @@ const Sidebar: FC = () => {
 
   // 渲染Menu
   const renderMenuItem: FC<SideBar.SideItem> = ({ title, icon, link, click }) => (
-    <Tooltip label={title || ''} placement="right" key={title || 'default'} isDisabled={!title}>
-      <Center py="20px" onClick={(): void => (link ? navigate(link) : click?.())}>
-        <Icon as={icon} color={isChecked(link) ? '#8774E7' : '#003400'} fontSize="28px" />
-      </Center>
-    </Tooltip>
+    // isDisabled={!title}
+    <div className="tooltip tooltip-open tooltip-right" data-tip={title || ''} key={title}>
+      <div className="py-[20px]" onClick={(): void => (link ? navigate(link) : click?.())}>
+        {/* <Icon as={icon} color={isChecked(link) ? '#8774E7' : '#003400'} fontSize="28px" /> */}
+      </div>
+    </div>
   )
 
   return (
-    <Flex
-      w="80px"
-      h={'100vh'}
-      direction="column"
-      justify={'space-between'}
-      align={'center'}
-      bg="#f3f3f3"
-    >
-      <Box>
-        <Center my="20px" color="#fff">
-          <Circle size="40px" bg="tomato" color="white">
-            DX
-          </Circle>
-        </Center>
+    <div className="flex flex-col justify-between items-center bg-[#f3f3f3] w-[80px] h-screen">
+      <div>
+        <div className="my-[20px] text-white">
+          <div className="text-md bg-[tomato] text-white">DX</div>
+        </div>
         {/* 菜单栏 */}
         {getMenuItems().map(renderMenuItem)}
-      </Box>
+      </div>
 
       {/* 操作栏 */}
-      <Box>{getOptionItems().map(renderMenuItem)}</Box>
-    </Flex>
+      <div>{getOptionItems().map(renderMenuItem)}</div>
+    </div>
   )
 }
 

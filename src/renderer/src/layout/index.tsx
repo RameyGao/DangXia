@@ -1,4 +1,3 @@
-import { Box, Flex } from '@chakra-ui/react'
 import { FC, useMemo } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import PageHeader from './header'
@@ -14,13 +13,13 @@ const Layout: FC = () => {
     [location]
   )
   return (
-    <Flex id="outer-container" color="red">
+    <div className="flex" id="outer-container" color="red">
       <Sidebar />
-      <Box bg="#fbfaf5" flex="1" p="20px">
+      <div className="flex-1 p-[20px] bg-[#fbfaf5]">
         <PageHeader title={title} />
         <Outlet />
-      </Box>
-    </Flex>
+      </div>
+    </div>
   )
 }
 

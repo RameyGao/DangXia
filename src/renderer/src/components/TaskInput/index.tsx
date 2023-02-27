@@ -1,5 +1,4 @@
 // 任务表单，包含任务名称、任务描述、任务状态、任务执行时间、任务设置
-import { Box, Input } from '@chakra-ui/react'
 import { FC } from 'react'
 
 // 输入框组件
@@ -11,13 +10,14 @@ const TaskInput: FC<TaskInput.Props> = ({
   onChange
 }) => {
   return (
-    <Box {...sx}>
-      <Input
+    <div {...sx}>
+      <input
+        type="text"
         placeholder={placeholder}
+        className="input w-full h-full max-w-xs"
         value={value}
         onChange={(e): void => onChange(e.target.value)}
-        isReadOnly={isDisabled}
-        h="full"
+        readOnly={isDisabled}
       />
       {/* <Editable
         placeholder="Paste here"
@@ -31,7 +31,7 @@ const TaskInput: FC<TaskInput.Props> = ({
         <EditablePreview width="100%" />
         <EditableInput />
       </Editable> */}
-    </Box>
+    </div>
   )
 }
 

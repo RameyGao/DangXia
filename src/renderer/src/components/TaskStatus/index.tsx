@@ -1,4 +1,3 @@
-import { Circle } from '@chakra-ui/react'
 import { FC } from 'react'
 
 const tsList: TaskStatus.TsList = {
@@ -9,9 +8,9 @@ const tsList: TaskStatus.TsList = {
 
 const TaskStatus: FC<TaskStatus.Props> = ({ status }) => {
   return (
-    <Circle bg={tsList[status]['outBg']} size="50">
-      <Circle bg={tsList[status]['innerBg']} size="30" />
-    </Circle>
+    <div className={`w-[50px] h-[50px] rounded-full bg-[${tsList[status]['outBg']}]`}>
+      <div className={`w-[30px] h-[30px] rounded-full bg-[${tsList[status]['innerBg']}]`} />
+    </div>
   )
 }
 
