@@ -1,25 +1,34 @@
 import { PRIORITY } from '@renderer/store/enum'
 import { findAndUpdateTodayTask } from '@renderer/store/features/taskSlice'
 import { FC, ReactNode, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 // 默认task
 const DefaultTask: TaskModalType.TaskInfo = { title: '', tag: 'STUDY', priority: 'none' }
 
 // 优先级列表
 const priorityList: Array<[string, string]> = Object.entries(PRIORITY)
 
+// 标题
+const Title = ({ text }: { text: string }): JSX.Element => (
+  <label className="label">
+    <span className="label-text">{text}</span>
+  </label>
+)
 // 输入框组件
 const TaskModal: FC<TaskModalType.Props> = ({ children, ...props }) => {
   const [task, setTask] = useState<TaskModalType.TaskInfo>(DefaultTask)
   const dispatch = useDispatch()
-  const todayList = useSelector<Task.IRootState, Task.TaskItem[]>((state) => state.task.todayList)
-
+  const [visible, setVisible] = useState<boolean>(false)
   useEffect(() => {
-    setTask({
-      ...DefaultTask,
-      ...props
-    })
-  }, [])
+    setTask(
+      visible
+        ? {
+            ...DefaultTask,
+            ...props
+          }
+        : DefaultTask
+    )
+  }, [visible])
 
   // 更新task的单个条目
   const handleChangeValue = (type: string, value: string): void => {
@@ -28,45 +37,36 @@ const TaskModal: FC<TaskModalType.Props> = ({ children, ...props }) => {
 
   // 保存或更新task
   const onSave = (): void => {
-    console.log('task', task)
     // 存储task
     dispatch(findAndUpdateTodayTask(task))
     // 关闭弹窗
-    console.log('todayList', todayList)
+    setVisible(false)
     // 动画展示新增元素
   }
 
   return (
     <>
-      <label htmlFor="my-modal" className="btn">
+      <div className="cursor-pointer" onClick={(): void => setVisible(true)}>
         {children}
-      </label>
-      <input type="checkbox" id="my-modal" className="modal-toggle" />
-      <div className="modal modal-bottom sm:modal-middle cursor-pointer">
-        <div className="modal-box relative">
-          <label htmlFor="my-modal" className="btn btn-sm btn-circle absolute right-2 top-2">
-            ✕
-          </label>
+      </div>
+      <div className={`${visible ? 'modal-open' : ''} modal modal-middle cursor-pointer`}>
+        <div className="modal-box relative max-w-md">
           <h3 className="font-bold text-lg">需要做点啥...</h3>
           <div className="py-4">
             {/* 具体事项 */}
-            <div className="form-control w-full max-w-xs">
-              <label className="label">
-                <span className="label-text">具体事项</span>
-              </label>
+            <div className="form-control w-full">
+              <Title text="具体事项" />
               <input
                 type="text"
-                className="input input-bordered w-full max-w-xs"
+                className="input input-bordered"
                 placeholder="我想想.."
                 value={task.title}
                 onChange={(e): void => handleChangeValue('title', e.target.value)}
               />
             </div>
             {/* 标签 */}
-            <div className="form-control w-full max-w-xs">
-              <label className="label">
-                <span className="label-text">标签</span>
-              </label>
+            <div className="form-control w-full">
+              <Title text="标签" />
               <select
                 className="select select-bordered"
                 value={task.tag}
@@ -78,15 +78,22 @@ const TaskModal: FC<TaskModalType.Props> = ({ children, ...props }) => {
             </div>
             {/* 优先级 */}
             <div className="form-control w-full max-w-xs">
-              <label className="label">
-                <span className="label-text">优先级</span>
-              </label>
-              <div className="flex">
+              <Title text="优先级" />
+              <div className="flex mr-4">
                 {priorityList.map(
-                  // FIXME: string应该用Priority来表示
+                  // FIXME: string用Priority来表示
                   ([value, label]: [string, string]): ReactNode => (
                     <div className="flex mr-4" key={label}>
-                      <input type="radio" className="radio radio-success mr-4" value={value} />
+                      <input
+                        type="radio"
+                        className="radio radio-success mr-4"
+                        value={value}
+                        checked={value === task.priority}
+                        onChange={(e): void => {
+                          console.log('eee', e)
+                          handleChangeValue('priority', e.target.value)
+                        }}
+                      />
                       {label}
                     </div>
                   )
@@ -95,9 +102,9 @@ const TaskModal: FC<TaskModalType.Props> = ({ children, ...props }) => {
             </div>
           </div>
           <div className="modal-action">
-            <label htmlFor="my-modal" className="btn" onClick={onSave}>
-              Yay!
-            </label>
+            <button className="btn btn-wide mx-auto" onClick={onSave}>
+              保存
+            </button>
           </div>
         </div>
       </div>

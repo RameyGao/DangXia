@@ -7,6 +7,7 @@ const tsList: TaskStatus.TsList = {
 }
 
 const TaskStatus: FC<TaskStatus.Props> = ({ status }) => {
+  console.log('...', status)
   return (
     <div className={`w-[50px] h-[50px] rounded-full bg-[${tsList[status]['outBg']}]`}>
       <div className={`w-[30px] h-[30px] rounded-full bg-[${tsList[status]['innerBg']}]`} />

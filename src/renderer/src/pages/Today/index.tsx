@@ -108,15 +108,15 @@ const Today: FC = () => {
         <EmptyToday />
       ) : (
         <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="droppable">
-            {(provided, snapshot: { isDraggingOver: boolean }): ReactNode => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                style={getListStyle(snapshot.isDraggingOver)}
-              >
-                {todayList.map((task: Task.TaskItem, index: number) => (
-                  <Draggable key={task.id} draggableId={task.id} index={index}>
+          {todayList.map((task: Task.TaskItem, index: number) => (
+            <Droppable droppableId="droppable" key={task.id}>
+              {(provided, snapshot: { isDraggingOver: boolean }): ReactNode => (
+                <div
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  style={getListStyle(snapshot.isDraggingOver)}
+                >
+                  <Draggable draggableId={task.id} index={index}>
                     {(provided, snapshot: { isDragging: boolean }): ReactNode => (
                       <div
                         className="p-6 rounded-lg mb-[12px] shadow-md"
@@ -130,11 +130,11 @@ const Today: FC = () => {
                       </div>
                     )}
                   </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          ))}
         </DragDropContext>
       )}
       <TaskModal>

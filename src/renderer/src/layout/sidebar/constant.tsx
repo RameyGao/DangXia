@@ -8,18 +8,18 @@ export const getMenuItems = (): SideBar.SideItem[] => {
     {
       title: 'Dashboard',
       link: '/dashboard',
-      icon: BiHomeSmile
+      icon: <BiHomeSmile />
       // icon: RiDashboard3Line
     },
     {
       title: 'Today',
       link: '/today',
-      icon: IoTodayOutline
+      icon: <IoTodayOutline />
     },
     {
       title: 'Plan Tracking',
       link: '/plan-tracking',
-      icon: SiProgress
+      icon: <SiProgress />
       // MdTrackChanges
     }
   ]
@@ -30,11 +30,11 @@ export const getOptionItems = (): SideBar.SideItem[] => [
   {
     title: 'Setting',
     link: '/setting',
-    icon: AiOutlineSetting
+    icon: <AiOutlineSetting />
   },
   // 切换主题色
   {
-    icon: MdOutlineWbSunny,
+    icon: <MdOutlineWbSunny />,
     click: (): void => {
       // 切换主题色
       // MdOutlineWbSunny
@@ -46,6 +46,6 @@ export const getOptionItems = (): SideBar.SideItem[] => [
   {
     title: 'Leave a message',
     link: '/leave-message',
-    icon: AiOutlineMessage
+    icon: <AiOutlineMessage />
   }
 ]

@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { cloneElement, FC } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { getMenuItems, getOptionItems } from './constant'
 
@@ -10,16 +10,13 @@ const Sidebar: FC = () => {
   const isChecked = (link: string | undefined): boolean => !!link && location.pathname === link
 
   // 渲染Menu
-  const renderMenuItem: FC<SideBar.SideItem> = ({ title, icon, link, click }) => (
-    // isDisabled={!title}
-    <div
-      className={`tooltip tooltip-right ${isChecked(link) && 'tooltip-open'}`}
-      data-tip={title || ''}
-      key={title}
-    >
+  const renderMenuItem: FC<SideBar.SideItem> = ({ title = '', icon, link, click }) => (
+    <div className={`tooltip tooltip-primary tooltip-right`} data-tip={title} key={title}>
       <div className="py-[20px]" onClick={(): void => (link ? navigate(link) : click?.())}>
-        {icon()}
-        {/* <Icon as={icon} color={isChecked(link) ? '#8774E7' : '#003400'} fontSize="28px" /> */}
+        {cloneElement(icon as JSX.Element, {
+          color: isChecked(link) ? '#8774E7' : '#003400',
+          size: '28px'
+        })}
       </div>
     </div>
   )
@@ -35,6 +32,7 @@ const Sidebar: FC = () => {
       </div>
 
       {/* 操作栏 */}
+
       <div>{getOptionItems().map(renderMenuItem)}</div>
     </div>
   )

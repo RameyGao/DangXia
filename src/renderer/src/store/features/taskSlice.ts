@@ -46,9 +46,10 @@ const taskSlice: Slice = createSlice({
         }
       } else {
         // 查询优先级，根据当前task的优先级插入list
-        const newTask = generateTask
+        const newTask = generateTask(action.payload)
+        console.log('state.todayList.length ', priority, state.todayList.length)
         if (priority === 'none' || state.todayList.length === 0) {
-          state.todayList.push(newTask)
+          state.todayList = [...state.todayList, newTask]
         } else {
           // 根据
           const prioritySort = ['high', 'middle', 'low', 'none']
