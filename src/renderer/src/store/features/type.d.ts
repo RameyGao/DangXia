@@ -14,15 +14,19 @@ declare namespace Task {
     priority: TaskPriority
     status: TaskStatus
   }
+  interface TodayTask {
+    [key in TaskPriority]: TaskItem[]
+  }
   type InitialTaskState = {
     date: number
-    todayList: TaskItem[]
+    todayList: TodayTask
   }
 
   type UpdateTaskPayload = {
     id: string
     key: keyof TaskItem
     value: string | TaskStatus
+    priority: Task.TaskPriority
   }
 
   type IRootState = {

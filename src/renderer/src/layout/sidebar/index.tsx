@@ -25,14 +25,16 @@ const Sidebar: FC = () => {
     <div className="flex flex-col justify-between items-center bg-[#f3f3f3] w-[80px] h-screen">
       <div className="flex flex-col">
         <div className="my-[20px] text-white">
-          <div className="text-md bg-[tomato] text-white">DX</div>
+          <div className="text-md bg-[tomato] text-white">Evay</div>
         </div>
         {/* 菜单栏 */}
         {getMenuItems().map(renderMenuItem)}
       </div>
 
       {/* 操作栏 */}
-
+      <button data-toggle-theme="dark" data-act-class="ACTIVECLASS">
+        颜色
+      </button>
       <div>{getOptionItems().map(renderMenuItem)}</div>
     </div>
   )

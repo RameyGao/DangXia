@@ -38,35 +38,32 @@ const reorder = (list: Task.TaskItem[], startIndex: number, endIndex: number): T
   const result = [...list]
   const [removed] = result.splice(startIndex, 1)
   result.splice(endIndex, 0, removed)
-
   return result
 }
 
 const grid = 8
 
 const getItemStyle = (isDragging: boolean, draggableStyle: CSS.Properties): CSS.Properties => ({
-  // some basic styles to make the items look a bit nicer
   userSelect: 'none',
   padding: `${grid * 2}px`,
-  margin: `0 0 ≈ 0`,
-
-  // change background colour if dragging
-  background: isDragging ? 'lightgreen' : '#ffffff',
-
-  // styles we need to apply on draggables
+  margin: `0 0 0 0`,
+  background: isDragging ? 'lightgreen' : '#fff',
   ...draggableStyle
 })
-const getListStyle = (isDraggingOver: boolean): CSS.Properties & { rounded: string } => ({
-  background: isDraggingOver ? 'lightblue' : '#fbfaf5',
-  padding: `${grid}px`,
-  rounded: 'md'
-})
+const getListStyle = (isDraggingOver: boolean): CSS.Properties & { rounded: string } => {
+  return {
+    background: isDraggingOver ? 'lightblue' : '#fbfaf5',
+    padding: `${grid}px`,
+    rounded: 'md'
+  }
+}
 
 // 当天的任务新建修改
 const Today: FC = () => {
   const dispatch = useDispatch()
-  const todayList = useSelector<Task.IRootState, Task.TaskItem[]>((state) => state.task.todayList)
+  const todayList = useSelector<Task.IRootState, Task.TodayTask>((state) => state.task.todayList)
 
+  console.log('todayList coming', todayList)
   // useEffect(() => {
   //   // TODO:若无任务，默认新增第一条
   //   // 当新增一条任务，展开所在任务的缩放
@@ -86,57 +83,71 @@ const Today: FC = () => {
     dispatch(setTodayTask(value))
   }
 
-  const onDragEnd = (result: {
-    destination: { index: number }
-    source: { index: number }
-  }): void => {
+  const onDragEnd = (
+    result: {
+      destination: { index: number }
+      source: { index: number }
+    },
+    taskList,
+    priority
+  ): void => {
     if (!result.destination) {
       return
     }
+    console.log('result', result)
     // 更新排序
-    const list = reorder(todayList, result.source.index, result.destination.index)
-
-    dispatch(updateTodayTaskByIndex(list))
+    const list = reorder(taskList, result.source.index, result.destination.index)
+    dispatch(
+      updateTodayTaskByIndex({
+        list,
+        priority
+      })
+    )
   }
-
-  console.log('todayList effect', todayList)
 
   return (
     <div>
-      {/* 下拉选项控制、标题输入、描述输入、单项设置 */}
-      {todayList.length === 0 ? (
-        <EmptyToday />
-      ) : (
-        <DragDropContext onDragEnd={onDragEnd}>
-          {todayList.map((task: Task.TaskItem, index: number) => (
-            <Droppable droppableId="droppable" key={task.id}>
-              {(provided, snapshot: { isDraggingOver: boolean }): ReactNode => (
-                <div
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                  style={getListStyle(snapshot.isDraggingOver)}
-                >
-                  <Draggable draggableId={task.id} index={index}>
-                    {(provided, snapshot: { isDragging: boolean }): ReactNode => (
-                      <div
-                        className="p-6 rounded-lg mb-[12px] shadow-md"
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
-                      >
-                        {/* 任务栏目 */}
-                        <TaskForm {...task} onChange={handleTodayTask} />
-                      </div>
-                    )}
-                  </Draggable>
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          ))}
-        </DragDropContext>
-      )}
+      {Object.values(todayList)?.length === 0 && <EmptyToday />}
+      {Object.entries(todayList).map(([priority, taskList]) => {
+        return (
+          <DragDropContext
+            onDragEnd={(result: {
+              destination: { index: number }
+              source: { index: number }
+            }): void => onDragEnd(result, taskList, priority)}
+            key={priority}
+          >
+            {taskList?.map((task: Task.TaskItem, index: number) => (
+              <Droppable droppableId={priority} key={task.id}>
+                {(provided, snapshot: { isDraggingOver: boolean }): ReactNode => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    style={getListStyle(snapshot.isDraggingOver)}
+                  >
+                    <Draggable draggableId={task.id} index={index}>
+                      {(provided, snapshot: { isDragging: boolean }): ReactNode => (
+                        <div
+                          className="p-1 rounded-lg my-3 shadow-md"
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
+                        >
+                          {/* 任务栏目 */}
+                          <TaskForm {...task} onChange={handleTodayTask} />
+                        </div>
+                      )}
+                    </Draggable>
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            ))}
+          </DragDropContext>
+        )
+      })}
+
       <TaskModal>
         <div
           className="fixed right-[28px] bottom-[36px] pointer text-[red]"

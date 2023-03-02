@@ -3,6 +3,8 @@ import { BiHomeSmile } from 'react-icons/bi'
 import { IoTodayOutline } from 'react-icons/io5'
 import { MdOutlineWbSunny } from 'react-icons/md'
 import { SiProgress } from 'react-icons/si'
+import { themeChange } from 'theme-change'
+
 export const getMenuItems = (): SideBar.SideItem[] => {
   return [
     {
@@ -36,6 +38,7 @@ export const getOptionItems = (): SideBar.SideItem[] => [
   {
     icon: <MdOutlineWbSunny />,
     click: (): void => {
+      themeChange(false)
       // 切换主题色
       // MdOutlineWbSunny
       // MdOutlineNightlight

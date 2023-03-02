@@ -15,11 +15,11 @@ const generateTask = (data: Partial<Task.TaskItem>): Task.TaskItem => {
 
 // 重组今日的task list
 const combineTodayList = (
-  todayList: Task.TaskItem[],
+  taskList: Task.TaskItem[],
   newData: Partial<Task.TaskItem>,
   key: keyof Task.TaskItem
 ): Task.TaskItem[] => {
-  return todayList.map((v) =>
+  return taskList.map((v) =>
     v[key] == newData[key]
       ? {
           ...v,
@@ -32,56 +32,76 @@ const taskSlice: Slice = createSlice({
   name: 'task',
   initialState: {
     date: Date.now(),
-    todayList: []
+    todayList: {
+      none: [],
+      low: [],
+      middle: [],
+      high: []
+    }
   } as Task.InitialTaskState,
   reducers: {
-    // 查找更新当天的task
+    // 查找 => 新增 / 更新当天的task
     findAndUpdateTodayTask(state, action: PayloadAction<Partial<Task.TaskItem>>) {
-      const { id, priority } = action.payload
-      // 更新task
+      const { id, priority } = action.payload as { id: string; priority: Task.TaskPriority }
       if (id) {
-        return {
-          ...state,
-          todayList: combineTodayList(state.todayList, action.payload, 'id')
-        }
+        state.todayList[priority] = combineTodayList(
+          state.todayList[priority],
+          action.payload,
+          'id'
+        )
       } else {
-        // 查询优先级，根据当前task的优先级插入list
         const newTask = generateTask(action.payload)
-        console.log('state.todayList.length ', priority, state.todayList.length)
-        if (priority === 'none' || state.todayList.length === 0) {
-          state.todayList = [...state.todayList, newTask]
-        } else {
-          // 根据
-          const prioritySort = ['high', 'middle', 'low', 'none']
-          const lastPriorityIndex = state.todayList.findLastIndex(
-            (v: Task.TaskItem) => v.priority === priority
-          )
-          if (lastPriorityIndex === -1) {
-            // ...
-          }
-          state.todayList.splice(lastPriorityIndex + 1, 0, newTask)
-        }
+        state.todayList[priority] = [...state.todayList[priority], newTask]
       }
       return state
     },
 
     // 设置单条栏目
     setTodayTask(state, action: PayloadAction<Task.UpdateTaskPayload>) {
-      const { id, key, value } = action.payload
+      const { id, key, value, priority } = action.payload
+      state.todayList[priority] = combineTodayList(
+        state.todayList[priority],
+        { id, [key]: value },
+        'id'
+      )
+      return state
+    },
+    // 根据索引更新排序
+    updateTodayTaskByIndex(state, action) {
+      const { list, priority } = action.payload
+      state.todayList[priority] = list
+      return state
+    },
+    // 任务删除
+    deleteTaskById(state, action) {
       return {
         ...state,
-        todayList: combineTodayList(state.todayList, { id, [key]: value }, 'id')
+        todayList: state.todayList.filter((v: Task.TaskItem) => v.id !== action.payload)
       }
     },
-
-    updateTodayTaskByIndex(state, action) {
+    // 任务删除
+    deleteTaskByIndex(state, action) {
       return {
         ...state,
-        todayList: action.payload
+        todayList: state.todayList.splice(action.payload, 1)
+      }
+    },
+    // 标记当天任务状态
+    setTaskStatus(state, action) {
+      const { id, status } = action.payload
+      return {
+        ...state,
+        todayList: combineTodayList(state.todayList, { id, status }, 'id')
       }
     }
   }
 })
 
-export const { findAndUpdateTodayTask, setTodayTask, updateTodayTaskByIndex } = taskSlice.actions
+export const {
+  findAndUpdateTodayTask,
+  setTodayTask,
+  updateTodayTaskByIndex,
+  setTaskStatus,
+  deleteTaskById
+} = taskSlice.actions
 export default taskSlice
