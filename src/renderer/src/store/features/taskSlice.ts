@@ -33,22 +33,35 @@ const taskSlice: Slice = createSlice({
   initialState: {
     date: Date.now(),
     todayList: {
-      none: [],
-      low: [],
+      high: [],
       middle: [],
-      high: []
+      low: [],
+      none: []
     }
   } as Task.InitialTaskState,
   reducers: {
     // 查找 => 新增 / 更新当天的task
     findAndUpdateTodayTask(state, action: PayloadAction<Partial<Task.TaskItem>>) {
-      const { id, priority } = action.payload as { id: string; priority: Task.TaskPriority }
+      const { id, priority, lastPriority } = action.payload as {
+        id: string
+        priority: Task.TaskPriority
+        lastPriority?: Task.TaskPriority
+      }
       if (id) {
-        state.todayList[priority] = combineTodayList(
-          state.todayList[priority],
-          action.payload,
-          'id'
-        )
+        if (lastPriority) {
+          // 删除上一次，并新增到新的优先级列表下
+          state.todayList[lastPriority] = state.todayList[lastPriority].filter(
+            (v: Task.TaskItem) => v.id !== id
+          )
+          const newTask = generateTask(action.payload)
+          state.todayList[priority].push(newTask)
+        } else {
+          state.todayList[priority] = combineTodayList(
+            state.todayList[priority],
+            action.payload,
+            'id'
+          )
+        }
       } else {
         const newTask = generateTask(action.payload)
         state.todayList[priority] = [...state.todayList[priority], newTask]
@@ -88,11 +101,9 @@ const taskSlice: Slice = createSlice({
     },
     // 标记当天任务状态
     setTaskStatus(state, action) {
-      const { id, status } = action.payload
-      return {
-        ...state,
-        todayList: combineTodayList(state.todayList, { id, status }, 'id')
-      }
+      const { id, priority, status } = action.payload
+      state.todayList[priority] = combineTodayList(state.todayList[priority], { id, status }, 'id')
+      return state
     }
   }
 })

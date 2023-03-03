@@ -1,13 +1,12 @@
-import TaskForm from '@renderer/components/TaskForm'
 import TaskModal from '@renderer/components/TaskModal'
-import { setTodayTask, updateTodayTaskByIndex } from '@renderer/store/features/taskSlice'
-import type * as CSS from 'csstype'
+import { updateTodayTaskByIndex } from '@renderer/store/features/taskSlice'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
-import { FC, ReactNode, useMemo } from 'react'
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
+import { FC, useMemo } from 'react'
+import { DragDropContext } from 'react-beautiful-dnd'
 import { MdOutlineAddCircle } from 'react-icons/md'
 import { useDispatch, useSelector } from 'react-redux'
+import TaskList from './components/TaskList'
 dayjs.extend(isBetween)
 
 /**
@@ -35,27 +34,11 @@ const EmptyToday: FC = () => {
 
 // a little function to help us with reordering the result
 const reorder = (list: Task.TaskItem[], startIndex: number, endIndex: number): Task.TaskItem[] => {
+  console.log('list', list, startIndex, endIndex)
   const result = [...list]
   const [removed] = result.splice(startIndex, 1)
   result.splice(endIndex, 0, removed)
   return result
-}
-
-const grid = 8
-
-const getItemStyle = (isDragging: boolean, draggableStyle: CSS.Properties): CSS.Properties => ({
-  userSelect: 'none',
-  padding: `${grid * 2}px`,
-  margin: `0 0 0 0`,
-  background: isDragging ? 'lightgreen' : '#fff',
-  ...draggableStyle
-})
-const getListStyle = (isDraggingOver: boolean): CSS.Properties & { rounded: string } => {
-  return {
-    background: isDraggingOver ? 'lightblue' : '#fbfaf5',
-    padding: `${grid}px`,
-    rounded: 'md'
-  }
 }
 
 // 当天的任务新建修改
@@ -78,75 +61,41 @@ const Today: FC = () => {
   //   }
   // }, [todayList])
 
-  // 新增task详细记录
-  const handleTodayTask = (value: Task.UpdateTaskPayload): void => {
-    dispatch(setTodayTask(value))
-  }
-
-  const onDragEnd = (
-    result: {
-      destination: { index: number }
-      source: { index: number }
-    },
-    taskList,
-    priority
-  ): void => {
-    if (!result.destination) {
+  const onDragEnd = (result: {
+    destination: { index: number }
+    source: { index: number }
+    type: Task.TaskPriority
+  }): void => {
+    const { destination, source, type } = result
+    if (!destination) {
       return
     }
-    console.log('result', result)
     // 更新排序
-    const list = reorder(taskList, result.source.index, result.destination.index)
+    const list = reorder(todayList[type], source.index, destination.index)
     dispatch(
       updateTodayTaskByIndex({
         list,
-        priority
+        priority: type
       })
     )
   }
-
+  const TaskPrioritys = ['high', 'middle', 'low', 'none'] as Task.TaskPriority[]
+  console.log('todayList', todayList)
   return (
     <div>
-      {Object.values(todayList)?.length === 0 && <EmptyToday />}
-      {Object.entries(todayList).map(([priority, taskList]) => {
-        return (
-          <DragDropContext
-            onDragEnd={(result: {
-              destination: { index: number }
-              source: { index: number }
-            }): void => onDragEnd(result, taskList, priority)}
-            key={priority}
-          >
-            {taskList?.map((task: Task.TaskItem, index: number) => (
-              <Droppable droppableId={priority} key={task.id}>
-                {(provided, snapshot: { isDraggingOver: boolean }): ReactNode => (
-                  <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    style={getListStyle(snapshot.isDraggingOver)}
-                  >
-                    <Draggable draggableId={task.id} index={index}>
-                      {(provided, snapshot: { isDragging: boolean }): ReactNode => (
-                        <div
-                          className="p-1 rounded-lg my-3 shadow-md"
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
-                        >
-                          {/* 任务栏目 */}
-                          <TaskForm {...task} onChange={handleTodayTask} />
-                        </div>
-                      )}
-                    </Draggable>
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            ))}
-          </DragDropContext>
-        )
-      })}
+      {Object.values(todayList).flat(1)?.length === 0 ? (
+        <EmptyToday />
+      ) : (
+        <DragDropContext onDragEnd={onDragEnd}>
+          {TaskPrioritys.map((key: Task.TaskPriority): JSX.Element => {
+            return (
+              <div className="my-4" key={key}>
+                <TaskList taskList={todayList[key]} listId={key} listType={key} />
+              </div>
+            )
+          })}
+        </DragDropContext>
+      )}
 
       <TaskModal>
         <div

@@ -3,6 +3,7 @@ import { deleteTaskById, setTaskStatus } from '@renderer/store/features/taskSlic
 import { FC } from 'react'
 import { TbSettings } from 'react-icons/tb'
 import { useDispatch } from 'react-redux'
+import DragLine from '../DragLine'
 import TaskModal from '../TaskModal'
 import TaskStatus from '../TaskStatus'
 
@@ -12,17 +13,19 @@ const TaskForm: FC<TaskForm.Props> = ({ id, title, tag, priority, status, onChan
 
   // 状态标记
   const onChangeStatus = (status: Task.TaskStatus): void => {
-    dispatch(setTaskStatus({ id, status }))
+    dispatch(setTaskStatus({ id, priority, status }))
   }
   // 任务删除
   const onDelete = (): void => {
     dispatch(deleteTaskById(id))
   }
+  console.log('prop', prop)
   return (
     <div
-      className="flex flex-row justify-between items-center w-full px-4 py-0 relative select-none"
+      className="flex flex-row justify-between items-center w-full py-5 select-none relative"
       {...prop}
     >
+      <DragLine className="absolute left-2/4 top-1 transform translate-x-1/2" />
       {/* 任务状态 - 颜色标记 */}
       <TaskStatus status={status} />
       {/* 任务名称 修改、disable... */}
@@ -42,7 +45,7 @@ const TaskForm: FC<TaskForm.Props> = ({ id, title, tag, priority, status, onChan
         </label>
         <ul
           tabIndex={0}
-          className="dropdown-content menu p-2 shadow bg-purple-100 rounded-box w-32"
+          className="dropdown-content menu shadow w-32 p-2 rounded-box bg-slate-100"
           style={{ right: -30 }}
         >
           <li className="menu-title">

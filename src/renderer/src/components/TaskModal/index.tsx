@@ -18,6 +18,7 @@ const Title = ({ text }: { text: string }): JSX.Element => (
 
 // 输入框组件
 const TaskModal: FC<TaskModalType.Props> = ({ children, ...props }) => {
+  let lastPriority = props?.priority
   const [task, setTask] = useState<TaskModalType.TaskInfo>(DefaultTask)
   const dispatch = useDispatch()
   const [visible, setVisible] = useState<boolean>(false)
@@ -30,6 +31,9 @@ const TaskModal: FC<TaskModalType.Props> = ({ children, ...props }) => {
           }
         : DefaultTask
     )
+    if (!visible) {
+      lastPriority = ''
+    }
   }, [visible])
 
   // 更新task的单个条目
@@ -40,7 +44,7 @@ const TaskModal: FC<TaskModalType.Props> = ({ children, ...props }) => {
   // 保存或更新task
   const onSave = (): void => {
     // 存储task
-    dispatch(findAndUpdateTodayTask(task))
+    dispatch(findAndUpdateTodayTask({ ...task, lastPriority }))
     // 关闭弹窗
     setVisible(false)
     // 动画展示新增元素
@@ -52,7 +56,15 @@ const TaskModal: FC<TaskModalType.Props> = ({ children, ...props }) => {
         {children}
       </div>
       {createPortal(
-        <div className={`${visible ? 'modal-open' : ''} modal modal-middle cursor-pointer`}>
+        <div
+          className={`${visible ? 'modal-open' : ''} modal modal-middle cursor-pointer`}
+          onClick={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
+            console.log(e)
+            setVisible(false)
+          }}
+        >
           <div className="modal-box relative max-w-md">
             <h3 className="font-bold text-lg">需要做点啥...</h3>
             <div className="py-4">
