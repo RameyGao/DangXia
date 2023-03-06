@@ -17,7 +17,7 @@ const getBackgroundColor = (isDragging: boolean, isGroupedOver: boolean): string
 function TaskItem({ task, isDragging, provided, index }: DnDTaskList.TaskItemProps): JSX.Element {
   const dispatch = useDispatch()
 
-  // 新增task详细记录
+  // 新增任务详细记录
   const handleTodayTask = (value: Task.UpdateTaskPayload): void => {
     dispatch(setTodayTask(value))
   }

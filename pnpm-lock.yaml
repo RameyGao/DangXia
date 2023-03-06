@@ -39,6 +39,7 @@ specifiers:
   react-burger-menu: ^3.0.8
   react-dom: ^18.2.0
   react-icons: ^4.7.1
+  react-portal: ^4.2.2
   react-redux: ^8.0.5
   react-router-dom: ^6.6.1
   sort-by: ^1.2.0
@@ -88,6 +89,7 @@ devDependencies:
   react: 18.2.0
   react-beautiful-dnd: 13.1.1_biqbaboplfbrettd7655fr4n2y
   react-dom: 18.2.0_react@18.2.0
+  react-portal: 4.2.2_biqbaboplfbrettd7655fr4n2y
   react-redux: 8.0.5_cn3ejhfta5lq2dae4xucvtkwvu
   react-router-dom: 6.6.1_biqbaboplfbrettd7655fr4n2y
   sort-by: 1.2.0
@@ -4194,6 +4196,17 @@ packages:
 
   /react-is/18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
+    dev: true
+
+  /react-portal/4.2.2_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-vS18idTmevQxyQpnde0Td6ZcUlv+pD8GTyR42n3CHUQq9OHi1C4jDE4ZWEbEsrbrLRhSECYiao58cvocwMtP7Q==}
+    peerDependencies:
+      react: ^16.0.0-0 || ^17.0.0-0 || ^18.0.0-0
+      react-dom: ^16.0.0-0 || ^17.0.0-0 || ^18.0.0-0
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: true
 
   /react-redux/7.2.9_biqbaboplfbrettd7655fr4n2y:

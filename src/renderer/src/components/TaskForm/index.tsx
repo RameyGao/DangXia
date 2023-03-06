@@ -17,9 +17,8 @@ const TaskForm: FC<TaskForm.Props> = ({ id, title, tag, priority, status, onChan
   }
   // 任务删除
   const onDelete = (): void => {
-    dispatch(deleteTaskById(id))
+    dispatch(deleteTaskById({ id, priority }))
   }
-  console.log('prop', prop)
   return (
     <div
       className="flex flex-row justify-between items-center w-full py-5 select-none relative"

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit'
 import { getUid } from '@renderer/utils/uuid'
 
-// 生成一条task
+// 生成一条任务
 const generateTask = (data: Partial<Task.TaskItem>): Task.TaskItem => {
   return {
     id: getUid(),
@@ -13,7 +13,7 @@ const generateTask = (data: Partial<Task.TaskItem>): Task.TaskItem => {
   }
 }
 
-// 重组今日的task list
+// 重组今日的任务列表
 const combineTodayList = (
   taskList: Task.TaskItem[],
   newData: Partial<Task.TaskItem>,
@@ -37,20 +37,22 @@ const taskSlice: Slice = createSlice({
       middle: [],
       low: [],
       none: []
-    }
+    },
+    allTaskList: [] // 包含当天的任务列表
   } as Task.InitialTaskState,
+  // effects: {},
   reducers: {
-    // 查找 => 新增 / 更新当天的task
+    // 查找 => 新增 / 更新当天的任务
     findAndUpdateTodayTask(state, action: PayloadAction<Partial<Task.TaskItem>>) {
-      const { id, priority, lastPriority } = action.payload as {
+      const { id, priority, lastpriority } = action.payload as {
         id: string
         priority: Task.TaskPriority
-        lastPriority?: Task.TaskPriority
+        lastpriority?: Task.TaskPriority
       }
       if (id) {
-        if (lastPriority) {
+        if (lastpriority) {
           // 删除上一次，并新增到新的优先级列表下
-          state.todayList[lastPriority] = state.todayList[lastPriority].filter(
+          state.todayList[lastpriority] = state.todayList[lastpriority].filter(
             (v: Task.TaskItem) => v.id !== id
           )
           const newTask = generateTask(action.payload)
@@ -87,16 +89,10 @@ const taskSlice: Slice = createSlice({
     },
     // 任务删除
     deleteTaskById(state, action) {
+      const { id, priority } = action.payload
       return {
         ...state,
-        todayList: state.todayList.filter((v: Task.TaskItem) => v.id !== action.payload)
-      }
-    },
-    // 任务删除
-    deleteTaskByIndex(state, action) {
-      return {
-        ...state,
-        todayList: state.todayList.splice(action.payload, 1)
+        todayList: state.todayList[priority].filter((v: Task.TaskItem) => v.id !== id)
       }
     },
     // 标记当天任务状态
@@ -105,6 +101,8 @@ const taskSlice: Slice = createSlice({
       state.todayList[priority] = combineTodayList(state.todayList[priority], { id, status }, 'id')
       return state
     }
+
+    // 获取所有的任务列表
   }
 })
 

@@ -7,6 +7,7 @@ declare namespace Task {
   // 任务优先级
   type TaskPriority = 'none' | 'low' | 'middle' | 'high'
 
+  // 单条任务记录
   type TaskItem = {
     id: string
     title: string
@@ -14,12 +15,19 @@ declare namespace Task {
     priority: TaskPriority
     status: TaskStatus
   }
+  // 排序的任务对象
   interface TodayTask {
     [key in TaskPriority]: TaskItem[]
+  }
+
+  // 所有的任务记录
+  interface AllTaskList {
+    [key: string]: TaskItem[]
   }
   type InitialTaskState = {
     date: number
     todayList: TodayTask
+    allTaskList: AllTaskList | []
   }
 
   type UpdateTaskPayload = {
