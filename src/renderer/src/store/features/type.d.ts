@@ -24,7 +24,7 @@ declare namespace Task {
   interface AllTaskList {
     [key: string]: TaskItem[]
   }
-  type InitialTaskState = {
+  type TaskState = {
     date: number
     todayList: TodayTask
     allTaskList: AllTaskList | []
@@ -38,6 +38,11 @@ declare namespace Task {
   }
 
   type IRootState = {
-    task: InitialTaskState
+    task: TaskState
+    taskModal: TaskModalState
+  }
+  type TaskModalState = {
+    open: boolean
+    task: TaskItem
   }
 }

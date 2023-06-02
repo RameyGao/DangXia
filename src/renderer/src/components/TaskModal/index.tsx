@@ -1,5 +1,6 @@
 import { PRIORITY } from '@renderer/store/enum'
 import { findAndUpdateTodayTask } from '@renderer/store/features/taskSlice'
+import classnames from 'classnames'
 import { FC, ReactNode, useState } from 'react'
 import { PortalWithState } from 'react-portal'
 
@@ -18,7 +19,7 @@ const Title = ({ text }: { text: string }): JSX.Element => (
 )
 
 // 输入框组件
-const TaskModal: FC<TaskModalType.Props> = ({ children, ...props }) => {
+const TaskModal: FC<TaskModalType.Props> = ({ children, className, ...props }) => {
   const [task, setTask] = useState<TaskModalType.TaskInfo>(DefaultTask)
   const dispatch = useDispatch()
 
@@ -29,6 +30,7 @@ const TaskModal: FC<TaskModalType.Props> = ({ children, ...props }) => {
 
   // 保存或更新任务
   const onSave = (closePortal): void => {
+    if (!task.title) return
     // 存储任务
     dispatch(findAndUpdateTodayTask({ ...task, lastpriority: props?.priority }))
     // 关闭弹窗
@@ -50,7 +52,11 @@ const TaskModal: FC<TaskModalType.Props> = ({ children, ...props }) => {
     >
       {({ openPortal, closePortal, isOpen, portal }): JSX.Element => (
         <>
-          <label htmlFor="task-modal-portal" className="cursor-pointer" onClick={openPortal}>
+          <label
+            htmlFor="task-modal-portal"
+            className={`cursor-pointer ${className}`}
+            onClick={openPortal}
+          >
             {children}
           </label>
           {portal(
@@ -69,7 +75,7 @@ const TaskModal: FC<TaskModalType.Props> = ({ children, ...props }) => {
                     e.stopPropagation()
                   }}
                 >
-                  <h3 className="font-bold text-lg">需要做点啥...</h3>
+                  <h3 className="font-bold text-lg">想要做点啥...</h3>
                   <div className="py-4">
                     {/* 具体事项 */}
                     <div className="form-control w-full">
@@ -107,7 +113,6 @@ const TaskModal: FC<TaskModalType.Props> = ({ children, ...props }) => {
                                 value={value}
                                 checked={value === task.priority}
                                 onChange={(e): void => {
-                                  console.log('eee', e)
                                   handleChangeValue('priority', e.target.value)
                                 }}
                               />
@@ -119,7 +124,15 @@ const TaskModal: FC<TaskModalType.Props> = ({ children, ...props }) => {
                     </div>
                   </div>
                   <div className="modal-action">
-                    <button className="btn btn-wide mx-auto" onClick={() => onSave(closePortal)}>
+                    <button
+                      className={classnames(
+                        'btn',
+                        'btn-wide',
+                        { 'btn-primary': task.title },
+                        'mx-auto'
+                      )}
+                      onClick={(): void => onSave(closePortal)}
+                    >
                       保存
                     </button>
                   </div>

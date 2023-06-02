@@ -7,7 +7,6 @@ import type {
 } from 'react-beautiful-dnd'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import TaskItem from './TaskItem'
-
 export const getBackgroundColor = (isDraggingOver: boolean, isDraggingFrom: boolean): string => {
   if (isDraggingOver) {
     return 'bg-red-400'
@@ -77,6 +76,7 @@ export default function TaskList({
                       //       dragProvided.draggableProps.style
                       //     )}
                       //   >
+
                       <TaskItem
                         key={task.id}
                         task={task}

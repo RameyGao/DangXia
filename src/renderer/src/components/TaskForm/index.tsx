@@ -27,16 +27,12 @@ const TaskForm: FC<TaskForm.Props> = ({ id, title, tag, priority, status, onChan
       <DragLine className="absolute left-2/4 top-1 transform translate-x-1/2" />
       {/* 任务状态 - 颜色标记 */}
       <TaskStatus status={status} />
-      {/* 任务名称 修改、disable... */}
-      <input
-        id={id}
-        type="text"
-        placeholder="请输入任务名称"
-        className="input input-md w-full mx-4 text-base font-normal"
-        value={title}
-        onChange={(e): void => onChange({ id, key: 'title', value: e.target.value, priority })}
-        readOnly={false}
-      />
+      {/* 任务名称 修改、disabled... */}
+      <TaskModal id={id} title={title} tag={tag} priority={priority} className="flex-1">
+        <div className="w-[98%] mx-[1%] text-base font-normal rounded-lg border-current bg-white p-3">
+          {title}
+        </div>
+      </TaskModal>
       {/* 设置：任务状态、操作 */}
       <div className="dropdown dropdown-hover dropdown-bottom dropdown-end">
         <label tabIndex={0} className="align-middle">
@@ -61,11 +57,6 @@ const TaskForm: FC<TaskForm.Props> = ({ id, title, tag, priority, status, onChan
           </li>
           <li>
             <button onClick={onDelete}>删除</button>
-          </li>
-          <li>
-            <TaskModal id={id} title={title} tag={tag} priority={priority}>
-              编辑
-            </TaskModal>
           </li>
         </ul>
       </div>

@@ -39,7 +39,7 @@ const taskSlice: Slice = createSlice({
       none: []
     },
     allTaskList: [] // 包含当天的任务列表
-  } as Task.InitialTaskState,
+  } as Task.TaskState,
   // effects: {},
   reducers: {
     // 查找 => 新增 / 更新当天的任务

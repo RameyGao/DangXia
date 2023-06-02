@@ -1,6 +1,5 @@
 declare namespace TaskForm {
   interface Props extends Task.TaskItem {
-    onChange: (v: ChangeEventHandler) => void
     [prop: string]: unknown
   }
   type ListProps = {

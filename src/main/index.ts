@@ -1,6 +1,6 @@
-import { app, shell, BrowserWindow } from 'electron'
+import { electronApp, is, optimizer } from '@electron-toolkit/utils'
+import { BrowserWindow, app, shell } from 'electron'
 import * as path from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 
 function createWindow(): void {
   // Create the browser window.

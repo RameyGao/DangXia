@@ -8,15 +8,15 @@ const PlanTracking: FC = () => {
 
   return (
     <div>
-      <div
-        tabIndex={0}
-        className="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
-      >
-        <div className="collapse-title text-xl font-medium">2022-10-02</div>
-        <div className="collapse-content">
-          <p>tabIndex={0} attribute is necessary to make the div focusable</p>
+      {allTaskList.map((task, index) => (
+        <div className="collapse bg-base-200" key={index}>
+          <input type="radio" name="my-accordion-1" checked />
+          <div className="collapse-title text-xl font-medium">{task.title}</div>
+          <div className="collapse-content">
+            <p>{task.title}</p>
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   )
 }

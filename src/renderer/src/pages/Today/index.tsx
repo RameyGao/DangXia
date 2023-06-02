@@ -80,7 +80,7 @@ const Today: FC = () => {
     )
   }
   const TaskPrioritys = ['high', 'middle', 'low', 'none'] as Task.TaskPriority[]
-  console.log('todayList', todayList)
+
   return (
     <div>
       {Object.values(todayList).flat(1)?.length === 0 ? (

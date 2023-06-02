@@ -1,5 +1,4 @@
 import TaskForm from '@renderer/components/TaskForm'
-import { setTodayTask } from '@renderer/store/features/taskSlice'
 import { memo } from 'react'
 import { useDispatch } from 'react-redux'
 
@@ -17,10 +16,6 @@ const getBackgroundColor = (isDragging: boolean, isGroupedOver: boolean): string
 function TaskItem({ task, isDragging, provided, index }: DnDTaskList.TaskItemProps): JSX.Element {
   const dispatch = useDispatch()
 
-  // 新增任务详细记录
-  const handleTodayTask = (value: Task.UpdateTaskPayload): void => {
-    dispatch(setTodayTask(value))
-  }
   return (
     <div
       className={`px-4 rounded-lg my-3 shadow-md border border-light-blue-500 border-opacity-25`}
@@ -33,7 +28,7 @@ function TaskItem({ task, isDragging, provided, index }: DnDTaskList.TaskItemPro
       data-index={index}
       aria-label={`${task.title} task ${task.priority}`}
     >
-      <TaskForm {...task} onChange={handleTodayTask} />
+      <TaskForm {...task} />
     </div>
   )
 }
